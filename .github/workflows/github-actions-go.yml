@@ -1,0 +1,28 @@
+name: Yeego
+on:
+  push:
+    branches:
+      - master
+jobs:
+  Build-Yeego:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Set up Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: "1.18.4"
+
+      - name: Build win-amd64
+        run: GOOS=windows GOARCH=amd64 go build -o bin/yeego.exe main.go
+
+      - name: Build linux-amd64
+        run: GOOS=linux GOARCH=amd64 go build -o bin/yeego main.go
+
+      - name: Publish build artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: builds-${{ github.run_id }}-${{ github.run_number }}
+          path: bin/
